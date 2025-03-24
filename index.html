@@ -3,12 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TurboWarp Embed</title>
+    <title>TurboWarp Embed with Fullscreen</title>
     <style>
         body {
             margin: 0;
             padding: 20px;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
@@ -24,6 +25,7 @@
             overflow: hidden;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             background-color: white;
+            transition: all 0.3s ease; /* 全画面時のスムーズな変化 */
         }
 
         iframe {
@@ -31,15 +33,72 @@
             height: 100%;
             border: none;
         }
+
+        .fullscreen {
+            width: 100vw !important;
+            height: 100vh !important;
+            border: none;
+            border-radius: 0;
+            box-shadow: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+        }
+
+        .controls {
+            margin-top: 10px;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
     </style>
 </head>
 <body>
-    <div class="iframe-container">
+    <div class="iframe-container" id="iframeContainer">
         <iframe src="https://turbowarp.org/523967150/embed" 
                 allowtransparency="true" 
                 scrolling="no" 
                 allowfullscreen>
         </iframe>
     </div>
+    <div class="controls">
+        <button onclick="toggleFullscreen()">全画面表示</button>
+    </div>
+
+    <script>
+        function toggleFullscreen() {
+            const container = document.getElementById('iframeContainer');
+            if (!document.fullscreenElement) {
+                container.requestFullscreen().catch(err => {
+                    alert(`全画面モードにできませんでした: ${err.message}`);
+                });
+                container.classList.add('fullscreen');
+            } else {
+                document.exitFullscreen();
+                container.classList.remove('fullscreen');
+            }
+        }
+
+        // 全画面モード終了時にクラスを削除
+        document.addEventListener('fullscreenchange', () => {
+            const container = document.getElementById('iframeContainer');
+            if (!document.fullscreenElement) {
+                container.classList.remove('fullscreen');
+            }
+        });
+    </script>
 </body>
 </html>
